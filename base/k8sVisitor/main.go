@@ -93,11 +93,11 @@ func (v NameVisitor) Visit(fn VisitorFunc) error {
 
 // Other Visitor
 type OtherThingsVisitor struct {
-	Visitor VisitorCtl
+	visitor VisitorCtl
 }
 
 func (v OtherThingsVisitor) Visit(fn VisitorFunc) error {
-	return v.Visitor.Visit(func(info *Info, err error) error {
+	return v.visitor.Visit(func(info *Info, err error) error {
 		fmt.Println("OtherThingsVisitor() before call function")
 		err = fn(info, err)
 		if err == nil {
@@ -124,16 +124,26 @@ func (v LogVisitor) Visit(fn VisitorFunc) error {
 
 func main() {
 	info := Info{}
+	// &info 实现了 VisitorCtl
 	var v VisitorCtl = &info
-	v = LogVisitor{v}
-	v = NameVisitor{v}
-	v = OtherThingsVisitor{v}
 
-	loadFile := func(info *Info, err error) error {
+	// 层层包装后，v 的数据结构类似链表
+	// v = LogVisitor
+	v = LogVisitor{v}
+	fmt.Println(fmt.Sprintf("v = %T\n", v))
+
+	// v.visitor = LogVisitor
+	v = NameVisitor{v}
+	fmt.Println(fmt.Sprintf("v = %T\n", v.(NameVisitor).visitor))
+
+	// v.visitor.visitor = LogVisitor
+	v = OtherThingsVisitor{v}
+	fmt.Println(fmt.Sprintf("v = %T\n", v.(OtherThingsVisitor).visitor.(NameVisitor).visitor))
+
+	_ = v.Visit(func(info *Info, err error) error {
 		info.Name = "Tom"
 		info.Namespace = "NONE"
 		info.OtherThings = "We are running as remote team."
 		return nil
-	}
-	_ = v.Visit(loadFile)
+	})
 }
