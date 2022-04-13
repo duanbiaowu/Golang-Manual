@@ -8,9 +8,10 @@ package demo
 
 // Injectors from wire.go:
 
+// docs: https://zhuanlan.zhihu.com/p/110453784
 func InitMission(name string) Mission {
 	player := NewPlayer(name)
-	monster := NewMonster()
+	monster := NewMonster(name)
 	mission := NewMission(player, monster)
 	return mission
 }

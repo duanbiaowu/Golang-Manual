@@ -6,8 +6,8 @@ type Monster struct {
 	Name string
 }
 
-func NewMonster() Monster {
-	return Monster{"Kitty"}
+func NewMonster(name string) Monster {
+	return Monster{name}
 }
 
 type Player struct {
@@ -33,6 +33,6 @@ func (m Mission) Start() {
 
 func InitMissionNative(name string) Mission {
 	player := NewPlayer(name)
-	monster := NewMonster()
+	monster := NewMonster(name)
 	return NewMission(player, monster)
 }
