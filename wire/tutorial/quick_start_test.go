@@ -23,3 +23,12 @@ func TestEvent_WireChangesStart(t *testing.T) {
 		event2.Start()
 	}
 }
+
+func TestEvent_WireChangesWithSetStart(t *testing.T) {
+	event2, err := InitializeEvent2WithSet("hello kitty")
+	if err != nil {
+		panic(err)
+	} else {
+		event2.Start()
+	}
+}

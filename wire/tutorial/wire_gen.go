@@ -6,6 +6,10 @@
 
 package tutorial
 
+import (
+	"github.com/google/wire"
+)
+
 // Injectors from wire.go:
 
 func InitializeEvent() Event {
@@ -24,3 +28,17 @@ func InitializeEvent2(phrase string) (Event2, error) {
 	}
 	return event2, nil
 }
+
+func InitializeEvent2WithSet(phrase string) (Event2, error) {
+	message := NewMessage2(phrase)
+	greeter2 := NewGreeter2(message)
+	event2, err := NewEvent2(greeter2)
+	if err != nil {
+		return Event2{}, err
+	}
+	return event2, nil
+}
+
+// wire.go:
+
+var Event2Set = wire.NewSet(NewGreeter2, NewMessage2)
