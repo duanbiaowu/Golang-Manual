@@ -22,7 +22,17 @@ func InitializeFooBar() FooBar {
 	return fooBar
 }
 
+func InitializeFooBar2() FooBar2 {
+	bar := ProvideBar()
+	fooBar2 := FooBar2{
+		MyBar: bar,
+	}
+	return fooBar2
+}
+
 // wire.go:
 
 //var Set = wire.NewSet(ProvideFoo, ProvideBar, wire.Struct(new(FooBar), "MyFoo", "MyBar"))
 var Set = wire.NewSet(ProvideFoo, ProvideBar, wire.Struct(new(FooBar), "*"))
+
+var Set2 = wire.NewSet(ProvideFoo, ProvideBar, wire.Struct(new(FooBar2), "*"))

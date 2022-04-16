@@ -15,3 +15,8 @@ type FooBar struct {
 	MyFoo Foo
 	MyBar Bar
 }
+
+type FooBar2 struct {
+	MyFoo Foo `wire:"-"` // wire ignore field
+	MyBar Bar
+}
