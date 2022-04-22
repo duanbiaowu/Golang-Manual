@@ -1,26 +1,29 @@
-package demo
+package demo2
 
 import "fmt"
-
-type Monster struct {
-	Name string
-}
-
-func NewMonster(name string) Monster {
-	return Monster{name}
-}
 
 type Player struct {
 	Name string
 }
 
-func NewPlayer(name string) Player {
-	return Player{name}
+type Monster struct {
+	Name string
 }
 
 type Mission struct {
 	Player  Player
 	Monster Monster
+}
+
+type PlayerParam string
+type MonsterParam string
+
+func NewPlayer(name PlayerParam) Player {
+	return Player{Name: string(name)}
+}
+
+func NewMonster(name MonsterParam) Monster {
+	return Monster{Name: string(name)}
 }
 
 func NewMission(p Player, m Monster) Mission {
@@ -32,7 +35,5 @@ func (m Mission) Start() {
 }
 
 func InitMissionNative(name string) Mission {
-	player := NewPlayer(name)
-	monster := NewMonster(name)
-	return NewMission(player, monster)
+	return Mission{Player{"dj"}, Monster{"kitty"}}
 }

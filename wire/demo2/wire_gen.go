@@ -4,14 +4,13 @@
 //go:build !wireinject
 // +build !wireinject
 
-package demo
+package demo2
 
 // Injectors from wire.go:
 
-// docs: https://zhuanlan.zhihu.com/p/110453784
-func InitMission(name string) Mission {
-	player := NewPlayer(name)
-	monster := NewMonster(name)
+func InitMission(p PlayerParam, m MonsterParam) Mission {
+	player := NewPlayer(p)
+	monster := NewMonster(m)
 	mission := NewMission(player, monster)
 	return mission
 }
