@@ -7,7 +7,9 @@ import (
 	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -20,6 +22,24 @@ func Test_setupRouter(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, w.Code)
 	assert.Equal(t, "pong", w.Body.String())
+}
+
+func Test_setupFormData(t *testing.T) {
+	router := setupFormData()
+
+	data := url.Values{
+		"id": {"1024"},
+		"name": {"Terry"},
+		"attrs": {`{height: 200, weight: 100, "hobby": ["coding", "reading"]}`},
+	}
+
+	w := httptest.NewRecorder()
+	req, _ := http.NewRequest("POST", "/user", strings.NewReader(data.Encode()))
+	req.Header.Set("Content-Type", "application/x-www-form-urlencoded")
+	router.ServeHTTP(w, req)
+
+	assert.Equal(t, http.StatusOK, w.Code)
+	assert.Equal(t, `id = 1024, name = Terry, attrs = {height: 200, weight: 100, "hobby": ["coding", "reading"]}`, w.Body.String())
 }
 
 func MockRequestFile(filePath, fieldName string) (multipart.File, error) {
