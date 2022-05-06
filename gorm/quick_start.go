@@ -4,6 +4,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"log"
 )
 
 type Product struct {
@@ -71,4 +72,15 @@ func MySQL() {
 
 	// Delete - delete product
 	db.Delete(&product, 1)
+
+	// Truncate
+	db.Create(&Product{Code: "D42", Price: 100})
+	db.Create(&Product{Code: "D43", Price: 200})
+	db.Exec("TRUNCATE TABLE products")
+
+	// Drop Table
+	err = db.Migrator().DropTable(&Product{})
+	if err != nil {
+		log.Println(err)
+	}
 }
