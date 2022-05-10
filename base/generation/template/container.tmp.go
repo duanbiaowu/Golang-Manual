@@ -1,7 +1,12 @@
+//go:build ignore
+// +build ignore
+
 package PACKAGE_NAME
+
 type GENERIC_NAMEContainer struct {
 	s []GENERIC_TYPE
 }
+
 func NewGENERIC_NAMEContainer() *GENERIC_NAMEContainer {
 	return &GENERIC_NAMEContainer{s: []GENERIC_TYPE{}}
 }
