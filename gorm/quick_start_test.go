@@ -61,7 +61,8 @@ func TestMySql(t *testing.T) {
 	}
 
 	// Migrate the schema
-	err = db.AutoMigrate(&Product{})
+	//err = db.AutoMigrate(&Product{})
+	err = db.Set("gorm:table_options", "CHARSET=utf8mb4").AutoMigrate(&Product{})
 	if err != nil {
 		log.Println(err)
 		t.Skip()
