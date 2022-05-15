@@ -11,8 +11,8 @@ var (
 type Singleton struct {
 }
 
-// New Singleton
-func New() Singleton {
+// NewInstance Singleton
+func NewInstance() Singleton {
 	once.Do(func() {
 		instance = Singleton{}
 	})

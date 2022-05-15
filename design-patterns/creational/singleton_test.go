@@ -5,14 +5,14 @@ import (
 	"testing"
 )
 
-func TestNew(t *testing.T) {
-	pre := New()
-	cur := New()
+func TestNewInstance(t *testing.T) {
+	pre := NewInstance()
+	cur := NewInstance()
 
 	for i := 0; i < 10; i++ {
 		assert.Equal(t, pre, cur)
 		assert.Same(t, &pre, &cur)
 		pre = cur
-		cur = New()
+		cur = NewInstance()
 	}
 }
