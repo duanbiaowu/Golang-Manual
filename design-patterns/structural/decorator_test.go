@@ -1,7 +1,10 @@
 package structural
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
+	"log"
+	"net/http"
 	"testing"
 )
 
@@ -43,4 +46,13 @@ func Test_TimedSumDecorator(t *testing.T) {
 
 	gSum := timedSumDecorator(gaussSum)
 	assert.Equal(t, int64(500000500000), gSum(1, 1000000))
+}
+
+func Test_HttpHandleDecorator(t *testing.T) {
+	hello := func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("Received Request %s from %s\n", r.URL.Path, r.RemoteAddr)
+		_, _ = fmt.Fprintf(w, "hello world"+r.URL.Path)
+	}
+
+	Handler(hello, WithServerHeader, WithBasicAuth, WithAuthCookie, WithDebugLog)
 }
