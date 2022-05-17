@@ -1,8 +1,9 @@
 package idiom
 
 import (
-	"github.com/stretchr/testify/assert"
 	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_Generate(t *testing.T) {
