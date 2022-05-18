@@ -16,7 +16,7 @@ type result struct {
 }
 
 func sumFiles(done <-chan struct{}, root string) (<-chan result, <-chan error) {
-	c := make(chan result, 1024)
+	c := make(chan result)
 	errc := make(chan error, 1)
 
 	go func() {
