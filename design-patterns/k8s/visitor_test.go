@@ -1,6 +1,7 @@
 package k8s
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -36,18 +37,28 @@ func Test_SimpleVisitorWithStrategyPattern(t *testing.T) {
 // 以装饰器模式来思考执行流程
 func Test_VisitorFunc(t *testing.T) {
 	info := Info{}
+	// &info 实现了 VisitorCtl
 	var v VisitorCtl = &info
-	v = LogVisitor{v}
-	v = NameVisitor{v}
-	v = OtherThingsVisitor{v}
 
-	loadFile := func(info *Info, err error) error {
-		info.Name = "service"
-		info.Namespace = "default"
-		info.OtherThings = "arguments..."
+	// 层层包装后，v 的数据结构类似链表
+	// v = LogVisitor
+	v = LogVisitor{v}
+	fmt.Println(fmt.Sprintf("v = %T\n", v))
+
+	// v.visitor = LogVisitor
+	v = NameVisitor{v}
+	fmt.Println(fmt.Sprintf("v = %T\n", v.(NameVisitor).visitor))
+
+	// v.visitor.visitor = LogVisitor
+	v = OtherThingsVisitor{v}
+	fmt.Println(fmt.Sprintf("v = %T\n", v.(OtherThingsVisitor).visitor.(NameVisitor).visitor))
+
+	err := v.Visit(func(info *Info, err error) error {
+		info.Name = "Tom"
+		info.Namespace = "NONE"
+		info.OtherThings = "We are running as remote team."
 		return nil
-	}
-	err := v.Visit(loadFile)
+	})
 	assert.Nil(t, err)
 }
 
