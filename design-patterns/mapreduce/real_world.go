@@ -131,8 +131,6 @@ func ReflectFilterInPlace(slicePtr, fn interface{}) {
 	in.Elem().SetLen(n)
 }
 
-var boolType = reflect.ValueOf(true).Type()
-
 func filter(slice, function interface{}, isPlace bool) (interface{}, int) {
 	sliceInType := reflect.ValueOf(slice)
 	if sliceInType.Kind() != reflect.Slice {
@@ -141,7 +139,7 @@ func filter(slice, function interface{}, isPlace bool) (interface{}, int) {
 
 	fn := reflect.ValueOf(function)
 	elemType := sliceInType.Type().Elem()
-	if !verifyFuncSignature(fn, elemType, boolType) {
+	if !verifyFuncSignature(fn, elemType, reflect.ValueOf(true).Type()) {
 		panic("filter: function must be of type func(" + elemType.String() + ") bool")
 	}
 
