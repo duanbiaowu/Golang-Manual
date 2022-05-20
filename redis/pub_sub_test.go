@@ -3,17 +3,16 @@ package redis
 import (
 	"context"
 	"fmt"
-	"github.com/go-redis/redis/v8"
 	"log"
 	"testing"
 	"time"
+
+	"github.com/go-redis/redis/v8"
 )
 
 func Test_PubSub(t *testing.T) {
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     "127.0.0.1:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Addr: ":6379",
 	})
 
 	start := make(chan struct{})
