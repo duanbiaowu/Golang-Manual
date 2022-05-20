@@ -1,6 +1,11 @@
 package tutorial
 
-import "testing"
+import (
+	"errors"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestEvent_DIStart(t *testing.T) {
 	message := NewMessage()
@@ -18,7 +23,8 @@ func TestEvent_WireStart(t *testing.T) {
 func TestEvent_WireChangesStart(t *testing.T) {
 	event2, err := InitializeEvent2("hello world")
 	if err != nil {
-		panic(err)
+		assert.NotNil(t, err)
+		assert.Equal(t, errors.New("could not create event: event greeter is grumpy"), err)
 	} else {
 		event2.Start()
 	}
@@ -27,7 +33,8 @@ func TestEvent_WireChangesStart(t *testing.T) {
 func TestEvent_WireChangesWithSetStart(t *testing.T) {
 	event2, err := InitializeEvent2WithSet("hello kitty")
 	if err != nil {
-		panic(err)
+		assert.NotNil(t, err)
+		assert.Equal(t, errors.New("could not create event: event greeter is grumpy"), err)
 	} else {
 		event2.Start()
 	}
