@@ -1,3 +1,6 @@
+//go:build ignore
+// +build ignore
+
 package main
 
 import (
@@ -181,7 +184,7 @@ func (l *list[T]) print() {
 //l.del(4)
 //l.print() //[2] -> [3] -> nil
 
-// 4. 范型 Map ---------------------------------------------
+// 4. 泛型 Map ---------------------------------------------
 func gMap[T1 any, T2 any] (arr []T1, f func(T1) T2) []T2 {
 	result := make([]T2, len(arr))
 	for i, elem := range arr {
@@ -209,7 +212,7 @@ func gMap[T1 any, T2 any] (arr []T1, f func(T1) T2) []T2 {
 //})
 //print(strs) // 零 壹 贰 叁 肆 伍 陆 柒 捌 玖
 
-// 5. 范型 Reduce ---------------------------------------------
+// 5. 泛型 Reduce ---------------------------------------------
 func gReduce[T1 any, T2 any] (arr []T1, init T2, f func(T2, T1) T2) T2 {
 	result := init
 	for _, elem := range arr {
@@ -224,7 +227,7 @@ func gReduce[T1 any, T2 any] (arr []T1, init T2, f func(T2, T1) T2) T2 {
 //})
 //fmt.Printf("Sum = %d \n", sum)
 
-// 6. 范型 Filter ---------------------------------------------
+// 6. 泛型 Filter ---------------------------------------------
 func gFilter[T any] (arr []T, in bool, f func(T) bool) []T {
 	result := []T{}
 	for _, elem := range arr {
@@ -250,7 +253,7 @@ func gFilterOut[T any] (arr []T, f func(T) bool) []T {
 //})
 //print(odds)
 
-// 6. 范型业务示例 ---------------------------------------------
+// 6. 泛型业务示例 ---------------------------------------------
 type Employee struct {
 	Name     string
 	Age      int
@@ -271,10 +274,10 @@ var employees = []Employee{
 // 统计所有员工薪水
 // gReduce 函数有点啰嗦，还需要传一个初始值，
 // 在具体的业务函数中，还要关心 result
-total_pay := gReduce(employees, 0.0, func (result float32, e Employee) float32 {
-	return result + e.Salary
-})
-fmt.Printf("Total Salary: %0.2f\n", total_pay) // Total Salary: 43502.05
+//total_pay := gReduce(employees, 0.0, func (result float32, e Employee) float32 {
+//	return result + e.Salary
+//})
+//fmt.Printf("Total Salary: %0.2f\n", total_pay) // Total Salary: 43502.05
 
 // refactor: 统计符合条件员工个数
 func gCountIf[T any](arr []T, f func(T) bool) int {
@@ -290,11 +293,11 @@ func gCountIf[T any](arr []T, f func(T) bool) int {
 // Sumable 接口限定了 U 类型
 // 等于多个类型限定
 // 语法说明: 只能是 Sumable 里的那些类型，也就是整型或浮点型
-type Sumable interface {
-	type int, int8, int16, int32, int64,
-		uint, uint8, uint16, uint32, uint64,
-		float32, float64
-}
+//type Sumable interface {
+//	type int, int8, int16, int32, int64,
+//		uint, uint8, uint16, uint32, uint64,
+//		float32, float64
+//}
 
 func gSum[T any, U Sumable](arr []T, f func(T) U) U {
 	var sum U
