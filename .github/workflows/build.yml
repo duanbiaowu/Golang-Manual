@@ -24,7 +24,6 @@ jobs:
           MYSQL_DATABASE: test
           MYSQL_USER: root
           MYSQL_PASSWORD: 123456
-          MYSQL_RANDOM_ROOT_PASSWORD: "yes"
         options: >-
           --health-cmd "mysqladmin ping -root -p123456"
           --health-interval 10s
