@@ -25,7 +25,7 @@ jobs:
           MYSQL_USER: root
           MYSQL_PASSWORD: 123456
         options: >-
-          --health-cmd "mysqladmin ping -root -p123456"
+          --health-cmd "mysqladmin ping"
           --health-interval 10s
           --health-start-period 10s
           --health-timeout 5s
