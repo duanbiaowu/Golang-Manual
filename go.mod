@@ -6,6 +6,7 @@ require (
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/google/wire v0.5.0
+	github.com/orcaman/concurrent-map v1.0.0
 	github.com/stretchr/testify v1.7.1
 	gorm.io/driver/mysql v1.3.3
 	gorm.io/driver/sqlite v1.1.1
