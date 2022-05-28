@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"runtime/debug"
 	"testing"
-)
-import "github.com/coocood/freecache"
 
-func Test_QuickStart(t *testing.T) {
+	"github.com/coocood/freecache"
+)
+
+func TestFreeCacheQuickStart(t *testing.T) {
 	cacheSize := 100 * 1024 * 1024
 	cache := freecache.NewCache(cacheSize)
 	debug.SetGCPercent(20)
