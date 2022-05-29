@@ -9,11 +9,11 @@ import (
 func TestBuilderConcat(t *testing.T) {
 	var str = randomString(10)
 	var builder strings.Builder
-	cap := 0
+	c := 0
 	for i := 0; i < 10000; i++ {
-		if builder.Cap() != cap {
-			cap = builder.Cap()
-			fmt.Printf("cap = %d\n", cap)
+		if builder.Cap() != c {
+			c = builder.Cap()
+			fmt.Printf("c = %d\n", c)
 		}
 		builder.WriteString(str)
 	}
