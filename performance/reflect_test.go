@@ -21,25 +21,25 @@ func TestReadRefConfig(t *testing.T) {
 }
 
 func BenchmarkManualNewRefConfig(b *testing.B) {
-	var config *RefConfig
+	var config *refConfig
 	for i := 0; i < b.N; i++ {
-		config = new(RefConfig)
+		config = new(refConfig)
 	}
 	_ = config
 }
 
 func BenchmarkReflectNewRefConfig(b *testing.B) {
-	var config *RefConfig
-	typ := reflect.TypeOf(RefConfig{})
+	var config *refConfig
+	typ := reflect.TypeOf(refConfig{})
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		config, _ = reflect.New(typ).Interface().(*RefConfig)
+		config, _ = reflect.New(typ).Interface().(*refConfig)
 	}
 	_ = config
 }
 
 func BenchmarkSetRefConfig(b *testing.B) {
-	config := new(RefConfig)
+	config := new(refConfig)
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
 		config.Name = "name"
@@ -50,7 +50,7 @@ func BenchmarkSetRefConfig(b *testing.B) {
 }
 
 func BenchmarkReflectFieldSetRefConfig(b *testing.B) {
-	typ := reflect.TypeOf(RefConfig{})
+	typ := reflect.TypeOf(refConfig{})
 	ins := reflect.New(typ).Elem()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -62,7 +62,7 @@ func BenchmarkReflectFieldSetRefConfig(b *testing.B) {
 }
 
 func BenchmarkReflectFieldByNameSetRefConfig(b *testing.B) {
-	typ := reflect.TypeOf(RefConfig{})
+	typ := reflect.TypeOf(refConfig{})
 	ins := reflect.New(typ).Elem()
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
@@ -76,7 +76,7 @@ func BenchmarkReflectFieldByNameSetRefConfig(b *testing.B) {
 // 避免直接调用 FieldByName
 // 可以利用字典将 Name 和 Index 的映射缓存起来。避免每次反复查找，耗费大量的时间。
 func BenchmarkReflectFieldByNameCacheSetRefConfig(b *testing.B) {
-	typ := reflect.TypeOf(RefConfig{})
+	typ := reflect.TypeOf(refConfig{})
 	cache := make(map[string]int)
 	for i := 0; i < typ.NumField(); i++ {
 		cache[typ.Field(i).Name] = i
