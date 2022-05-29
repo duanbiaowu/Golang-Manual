@@ -9,11 +9,11 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da
 	github.com/google/wire v0.5.0
 	github.com/orcaman/concurrent-map v1.0.0
+	github.com/pkg/profile v1.6.0
 	github.com/stretchr/testify v1.7.1
 	gorm.io/driver/mysql v1.3.3
 	gorm.io/driver/sqlite v1.1.1
 	gorm.io/gorm v1.23.4
-	github.com/pkg/profile v1.6.0
 )
 
 require (
@@ -34,7 +34,6 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 // indirect
-	github.com/pkg/profile v1.6.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.1.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
