@@ -70,3 +70,13 @@ func preByteConcat(n int, str string) string {
 	}
 	return string(buf)
 }
+
+// string.Builder 也提供了预分配内存的方式 Grow
+func preBuilderConcat(n int, str string) string {
+	var builder strings.Builder
+	builder.Grow(n * len(str))
+	for i := 0; i < n; i++ {
+		builder.WriteString(str)
+	}
+	return builder.String()
+}
