@@ -93,12 +93,12 @@ func BenchmarkMutexMap_Set(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		go func() {
+		go func(i int) {
 			for j := 0; j < 100; j++ {
 				mutexMap.Set(strconv.Itoa((i+j)%N), i)
 			}
 			finished <- true
-		}()
+		}(i)
 	}
 	for i := 0; i < b.N; i++ {
 		<-finished
@@ -110,12 +110,12 @@ func BenchmarkMutexMap_Get(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		go func() {
+		go func(i int) {
 			for j := 0; j < 100; j++ {
 				mutexMap.Get(strconv.Itoa((i + j) % N))
 			}
 			finished <- true
-		}()
+		}(i)
 	}
 	for i := 0; i < b.N; i++ {
 		<-finished
@@ -127,12 +127,12 @@ func BenchmarkSyncMap_Set(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		go func() {
+		go func(i int) {
 			for j := 0; j < 100; j++ {
 				syncMap.Store(strconv.Itoa((i+j)%N), i)
 			}
 			finished <- true
-		}()
+		}(i)
 	}
 	for i := 0; i < b.N; i++ {
 		<-finished
@@ -144,12 +144,12 @@ func BenchmarkSyncMap_Get(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		go func() {
+		go func(i int) {
 			for j := 0; j < 100; j++ {
 				syncMap.Load(strconv.Itoa((i + j) % N))
 			}
 			finished <- true
-		}()
+		}(i)
 	}
 	for i := 0; i < b.N; i++ {
 		<-finished
@@ -161,12 +161,12 @@ func BenchmarkConcurrentMap_Set(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		go func() {
+		go func(i int) {
 			for j := 0; j < 100; j++ {
 				concurrentMap.Set(strconv.Itoa((i+j)%N), i)
 			}
 			finished <- true
-		}()
+		}(i)
 	}
 	for i := 0; i < b.N; i++ {
 		<-finished
@@ -178,12 +178,12 @@ func BenchmarkConcurrentMap_Get(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		go func() {
+		go func(i int) {
 			for j := 0; j < 100; j++ {
 				concurrentMap.Get(strconv.Itoa((i + j) % N))
 			}
 			finished <- true
-		}()
+		}(i)
 	}
 	for i := 0; i < b.N; i++ {
 		<-finished
@@ -195,12 +195,12 @@ func BenchmarkConcurrentMap2_Set(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		go func() {
+		go func(i int) {
 			for j := 0; j < 100; j++ {
 				concurrentMap2.Set(strconv.Itoa((i+j)%N), i)
 			}
 			finished <- true
-		}()
+		}(i)
 	}
 	for i := 0; i < b.N; i++ {
 		<-finished
@@ -212,12 +212,12 @@ func BenchmarkConcurrentMap2_Get(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		go func() {
+		go func(i int) {
 			for j := 0; j < 100; j++ {
 				concurrentMap2.Get(strconv.Itoa((i + j) % N))
 			}
 			finished <- true
-		}()
+		}(i)
 	}
 	for i := 0; i < b.N; i++ {
 		<-finished
@@ -229,12 +229,12 @@ func BenchmarkConcurrentMap4_Set(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		go func() {
+		go func(i int) {
 			for j := 0; j < 100; j++ {
 				concurrentMap4.Set(strconv.Itoa((i+j)%N), i)
 			}
 			finished <- true
-		}()
+		}(i)
 	}
 	for i := 0; i < b.N; i++ {
 		<-finished
@@ -246,12 +246,12 @@ func BenchmarkConcurrentMap4_Get(b *testing.B) {
 
 	b.ResetTimer()
 	for i := 0; i < b.N; i++ {
-		go func() {
+		go func(i int) {
 			for j := 0; j < 100; j++ {
 				concurrentMap4.Get(strconv.Itoa((i + j) % N))
 			}
 			finished <- true
-		}()
+		}(i)
 	}
 	for i := 0; i < b.N; i++ {
 		<-finished
