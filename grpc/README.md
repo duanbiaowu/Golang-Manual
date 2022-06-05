@@ -4,5 +4,8 @@ Protobuf核心的工具集是C++语言开发的，在官方的protoc编译器中
 protoc --go_out=plugins=grpc:. hello.proto
 ```
 
+gRPC是建立在HTTP/2版本之上，如果HTTP不是HTTP/2协议则必然无法提供gRPC支持。
+同时，每个gRPC调用请求的Content-Type类型会被标注为"application/grpc"类型。
+
 ## reference
 1. https://chai2010.cn/advanced-go-programming-book/ch4-rpc/ch4-02-pb-intro.html
