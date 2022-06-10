@@ -7,6 +7,7 @@ import (
 )
 
 func TestDeferInFor(t *testing.T) {
+	t.Skip()
 	// defer在函数退出时才能执行，在for执行defer会导致资源延迟释放：
 	// 极端情况下（比如 for 循环执行完之后程序异常），将导致所有资源没有释放
 	//for i := 0; i < 5; i++ {
