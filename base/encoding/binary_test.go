@@ -135,7 +135,7 @@ func TestReadUvarint(t *testing.T) {
 	var buf2 = []byte{144, 192, 192, 129, 132, 136, 140, 144, 16, 0, 1, 1}
 
 	n, err := binary.ReadUvarint(bytes.NewBuffer(buf))
-	assert.Equal(t, 0, n)
+	assert.Equal(t, uint64(0), n)
 	assert.Equal(t, err, io.EOF)
 
 	n, err = binary.ReadUvarint(bytes.NewBuffer(buf2))
