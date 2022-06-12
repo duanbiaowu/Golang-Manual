@@ -2,6 +2,7 @@
 // see more:
 // 	https://github.com/pkg/errors
 //	https://pkg.go.dev/errors
+// 	一些不错的实践：https://lailin.xyz/post/go-training-03.html
 
 package idiom
 

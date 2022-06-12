@@ -15,6 +15,7 @@ require (
 	github.com/orcaman/concurrent-map v1.0.0
 	github.com/pkg/profile v1.6.0
 	github.com/stretchr/testify v1.7.1
+	github.com/pkg/errors v0.9.1
 	google.golang.org/grpc v1.47.0
 	google.golang.org/protobuf v1.28.0
 	gorm.io/driver/mysql v1.3.3
