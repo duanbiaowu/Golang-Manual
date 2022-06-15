@@ -19,6 +19,9 @@ func Test_PubSub(t *testing.T) {
 	done := make(chan struct{})
 	ctx := context.Background()
 
+	//ctx, cancel := context.WithCancel(context.Background())
+	//cancel() // context canceled
+
 	go func() {
 		sub := rdb.Subscribe(ctx, "dev")
 		ticker := time.NewTicker(time.Second)
