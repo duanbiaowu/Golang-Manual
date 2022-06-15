@@ -27,6 +27,8 @@ func (j *Jerry) Hello() {
 }
 
 func TestMakerDataRace(t *testing.T) {
+	t.Skip()
+
 	var ben = &Ben{name: "Ben"}
 	var jerry = &Jerry{"Jerry"}
 	var maker IceCreamMaker = ben
