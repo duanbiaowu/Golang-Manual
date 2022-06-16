@@ -75,6 +75,12 @@ go build -race
 ```
 不建议在生产环境 build 的时候开启数据竞争检测，因为这会带来一定的性能损失(一般内存5-10倍，执行时间2-20倍)，必须要 debug 的时候除外。 建议在执行单元测试时始终开启数据竞争的检测。
 
+## 覆盖率
+```shell
+go test -coverprofile=coverage.out    // coverage.out is the output filename
+go tool cover -html=coverage.out
+```
+
 ## reference
 1. https://github.com/link1st/go-stress-testing
 2. https://lailin.xyz/post/go-training-week3-data-race.html
