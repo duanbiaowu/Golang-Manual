@@ -33,12 +33,7 @@ jobs:
         run: ./test.sh
 
       - name: Upload coverage reports to Codecov
-        run: |
-        # Replace `linux` below with the appropriate OS
-        # Options are `alpine`, `linux`, `macos`, `windows`
-        curl -Os https://uploader.codecov.io/latest/linux/codecov
-        chmod +x codecov
-        ./codecov -t ${CODECOV_TOKEN}
+        run: bash <(curl -s https://codecov.io/bash)
 
       - name: Codecov
         uses: codecov/codecov-action@v3.1.0
