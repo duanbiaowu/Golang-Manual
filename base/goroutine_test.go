@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"runtime"
+	"sync"
 	"testing"
 	"time"
 
@@ -36,6 +37,7 @@ func TestGoroutineLeak(t *testing.T) {
 	// 通过context包来避免这个问题：
 	// 当main函数在break跳出循环时，通过调用cancel()来通知后台Goroutine退出，这样就避免了Goroutine的泄漏。
 	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 
 	ch := func(ctx context.Context) <-chan int {
 		ch := make(chan int)
@@ -61,4 +63,26 @@ func TestGoroutineLeak(t *testing.T) {
 
 	time.Sleep(time.Second)
 	assert.Equal(t, 2, runtime.NumGoroutine())
+}
+
+func TestGoroutineId(t *testing.T) {
+	gid, err := GoroutineId()
+	assert.Equal(t, nil, err)
+	t.Logf("> main.gid = %d", gid)
+
+	var wg sync.WaitGroup
+	for i := 0; i < 5; i++ {
+		wg.Add(1)
+		go func(id int) {
+			defer wg.Done()
+			gid, err := GoroutineId()
+			assert.Equal(t, nil, err)
+			t.Logf("> %d.gid = %d", id, gid)
+		}(i)
+	}
+	wg.Wait()
+
+	gid, err = GoroutineId()
+	assert.Equal(t, nil, err)
+	t.Logf("< main.gid = %d", gid)
 }
