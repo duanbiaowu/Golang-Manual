@@ -13,9 +13,10 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da
 	github.com/google/wire v0.5.0
 	github.com/orcaman/concurrent-map v1.0.0
+	github.com/pkg/errors v0.9.1
 	github.com/pkg/profile v1.6.0
 	github.com/stretchr/testify v1.7.1
-	github.com/pkg/errors v0.9.1
+	golang.org/x/sync v0.0.0-20220601150217-0de741cfad7f
 	google.golang.org/grpc v1.47.0
 	google.golang.org/protobuf v1.28.0
 	gorm.io/driver/mysql v1.3.3
