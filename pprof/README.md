@@ -1,4 +1,25 @@
-## Go pprof内存指标含义备忘录
+# 支持类型
+* CPU ：CPU 分析，采样消耗 cpu 的调用，这个一般用来定位排查程序里耗费计算资源的地方；
+* Memory ：内存分析，一般用来排查内存占用，内存泄露等问题；
+* Block ：阻塞分析，会采样程序里阻塞的调用情况；
+* Mutex ：互斥锁分析，采样互斥锁的竞争情况；
+
+# 开启方式
+* net/http/pprof ：使用在 web 服务器的场景；(只是在 runtime/pprof 上的一层 web 封装)
+* runtime/pprof  ：使用在非服务器应用程序的场景；
+
+# Memory
+
+## 基础点
+* golang 内存 pprof 是采样的，每 512KB 采样一次；
+* golang 的内存采样的是堆栈路径，而不是类型信息；
+* golang 的内存采样入口一定是通过mProf_Malloc，mProf_Free 这两个函数。所以，如果是 cgo 分配的内存，那么是没有机会调用到这两个函数的，所以如果是 cgo 导致的内存问题，go tool pprof 是分析不出来的；
+
+## 分析形式
+1. 如果是 net/http/pporf 方式开启的，那么可以直接在控制台上输入，浏览器就能看；
+2. 另一种方式是先把信息 dump 到本地文件，然后用 go tool 去分析（生产环境通用）
+
+## 指标含义备忘录
 ```shell
 // https://github.com/golang/go/blob/master/src/runtime/mstats.go#L150
 
@@ -110,7 +131,48 @@ import "net/http"
     
 http.ListenAndServe("0.0.0.0:10001", nil)
 // http://127.0.0.1:10001/debug/pprof/heap?debug=1
+// curl -sS 'http://127.0.0.1:10001/debug/pprof/heap?seconds=5' -o heap.pporf
 ```
 
-## reference
+## 示例
+```shell
+# 运行测试
+go test -v -run='TestPprof' .
+# dump 采样
+curl -sS 'http://127.0.0.1:10001/debug/pprof/heap?seconds=5' -o heap.pporf
+```
+
+## 结果说明
+```shell
+go tool pprof ./29075_20190523_154406_heap
+(pprof) o              
+...          
+  sample_index              = inuse_space          //: [alloc_objects | alloc_space | inuse_objects | inuse_space]
+...       
+(pprof) alloc_space
+(pprof) top
+Showing nodes accounting for 290MB, 100% of 290MB total
+      flat  flat%   sum%        cum   cum%
+     140MB 48.28% 48.28%      140MB 48.28%  main.funcA (inline)
+     100MB 34.48% 82.76%      190MB 65.52%  main.funcB (inline)
+      50MB 17.24%   100%      140MB 48.28%  main.funcC (inline)
+         0     0%   100%      290MB   100%  main.main
+         0     0%   100%      290MB   100%  runtime.main
+```
+
+**这个 top 信息表明了这么几点信息：**
+* main.funcA  这个函数现场分配了 140M 的内存，main.funcB 这个函数现场分配了 100M 内存，main.funcC 现场分配了 50M 内存；
+  * 现场的意思：纯粹自己函数直接分配的，而不是调用别的函数分配的； 
+  * 这些信息通过 flat 得知；
+* main.funcA  分配的 140M 内存纯粹是自己分配的，没有调用别的函数分配过内存；
+  * 这个信息通过 main.funcA flat 和 cum 都为 140 M 得出；
+* main.funcB  自己分配了 100MB，并且还调用了别的函数，别的函数里面涉及了 90M 的内存分配；
+  * 这个信息通过 main.funcB flat 和 cum 分别为 100 M，190M 得出；
+* main.funcC  自己分配了 50MB，并且还调用了别的函数，别的函数里面涉及了 90M 的内存分配；
+  * 这个信息通过 main.funcC flat 和 cum 分别为 50 M，140 M 得出；
+* main.main ：所有分配内存的函数调用都是走这个函数出去的。main 函数本身没有函数分配，但是他调用的函数分配了 290M；
+
+
+# reference
 1. https://pengrl.com/p/20031/
+2. https://mp.weixin.qq.com/s/OXpWRiCHcxpFlylUk3RDEA
