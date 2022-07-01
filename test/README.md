@@ -80,6 +80,18 @@ go build -race
 go test -coverprofile=coverage.out    // coverage.out is the output filename
 go tool cover -html=coverage.out
 ```
+## 先编译出 .test 文件
+**使用场景**
+1. 这台机器上编译，另一个地方跑单测；
+2. debug 单测程序；
+
+```shell
+go test -c -o example.test
+# 运行
+ ./example.test
+# 指定运行某一个文件
+-test.timeout=10m0s -test.v=true -test.run=TestPutAndGetKeyValue
+```
 
 ## reference
 1. https://github.com/link1st/go-stress-testing
