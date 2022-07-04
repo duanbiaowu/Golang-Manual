@@ -14,6 +14,7 @@ require (
 	github.com/golang/mock v1.6.0
 	github.com/google/wire v0.5.0
 	github.com/orcaman/concurrent-map v1.0.0
+	github.com/panjf2000/ants/v2 v2.5.0
 	github.com/pkg/errors v0.9.1
 	github.com/pkg/profile v1.6.0
 	github.com/stretchr/testify v1.7.1
