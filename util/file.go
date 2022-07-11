@@ -1,6 +1,9 @@
 package util
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func ByteCountToReadable(b int64) string {
 	const unit = 1024
@@ -13,4 +16,12 @@ func ByteCountToReadable(b int64) string {
 		exp++
 	}
 	return fmt.Sprintf("%.1f %cB", float64(b)/float64(div), "KMGTPE"[exp])
+}
+
+func CheckFileIsExist(name string) bool {
+	exist := true
+	if _, err := os.Stat(name); os.IsNotExist(err) {
+		exist = false
+	}
+	return exist
 }
