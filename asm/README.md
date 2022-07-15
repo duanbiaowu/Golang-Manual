@@ -51,6 +51,22 @@ MOVQ $101, AX = mov rax, 101
 * SB: Static base pointer: global symbols.
 * SP: Stack pointer: the highest address within the local stack frame.
 
+补充说明:
+FP: 使用形如 symbol+offset(FP) 的方式，引用函数的输入参数。例如 arg0+0(FP)，arg1+8(FP)，使用 FP 不加 symbol 时，无法通过编译，
+在汇编层面来讲，symbol 并没有什么用，加 symbol 主要是为了提升代码可读性。另外，官方文档虽然将伪寄存器 FP 称之为 frame pointer，
+实际上它根本不是 frame pointer，按照传统的 x86 的习惯来讲，frame pointer 是指向整个 stack frame 底部的 BP 寄存器。
+假如当前的 callee 函数是 add，在 add 的代码中引用 FP，该 FP 指向的位置不在 callee 的 stack frame 之内，
+而是在 caller 的 stack frame 上。具体可参见之后的 栈结构 一章。
+
+PC: 实际上就是在体系结构的知识中常见的 pc 寄存器，在 x86 平台下对应 ip 寄存器，amd64 上则是 rip。除了个别跳转之外，
+手写 plan9 代码与 PC 寄存器打交道的情况较少。
+
+SB: 全局静态基指针，一般用来声明函数或全局变量，在之后的函数知识和示例部分会看到具体用法。
+SP: plan9 的这个 SP 寄存器指向当前栈帧的局部变量的开始位置，使用形如 symbol+offset(SP) 的方式，引用函数的局部变量。
+offset 的合法取值是 [-framesize, 0)，注意是个左闭右开的区间。假如局部变量都是 8 字节，那么第一个局部变量就可以用 localvar0-8(SP) 来表示。
+这也是一个词不表意的寄存器。与硬件寄存器 SP 是两个不同的东西，在栈帧 size 为 0 的情况下，伪寄存器 SP 和硬件寄存器 SP 指向同一位置。
+手写汇编代码时，如果是 symbol+offset(SP) 形式，则表示伪寄存器 SP。如果是 offset(SP) 则表示硬件寄存器 SP。务必注意。对于编译输出(go tool compile -S / go tool objdump)的代码来讲，目前所有的 SP 都是硬件寄存器 SP，无论是否带 symbol。
+
 这里对容易混淆的几点简单进行说明：
 1. 伪 SP 和硬件 SP 不是一回事，在手写代码时，伪 SP 和硬件 SP 的区分方法是看该 SP 前是否有 symbol。如果有 symbol，那么即为伪寄存器，
 如果没有，那么说明是硬件 SP 寄存器。 
@@ -142,6 +158,29 @@ LEAQ 16(BX)(AX*1), CX
 
 ## 伪寄存器 SP 、伪寄存器 FP 和硬件寄存器 SP
 伪 SP 和伪 FP 的相对位置是会变化的，手写时不应该用伪 SP 和 >0 的 offset 来引用数据，否则结果可能会出乎你的预料。
+
+## global symbol: size 错误
+```shell
+NameData: missing Go type information for global symbol: size 8
+```
+错误提示汇编中定义的NameData符号没有类型信息。其实Go汇编语言中定义的数据并没有所谓的类型，每个符号只不过是对应一块内存而已，
+因此NameData符号也是没有类型的。但是Go语言是再带垃圾回收器的语言，而Go汇编语言是工作在自动垃圾回收体系框架内的。
+当Go语言的垃圾回收器在扫描到NameData变量的时候，无法知晓该变量内部是否包含指针，因此就出现了这种错误。错误的根本原因并不是NameData没有类型，
+而是NameData变量没有标注是否会含有指针信息。
+### 解决方案
+1. 通过给NameData变量增加一个NOPTR标志，表示其中不会包含指针数据可以修复该错误
+```shell
+#include "textflag.h"
+
+GLOBL ·NameData(SB),NOPTR,$8
+```
+2. 通过给·NameData变量在Go语言中增加一个不含指针并且大小为8个字节的类型来修改该错误：
+```go
+package pkg
+
+var NameData [8]byte
+var Name string
+```
 
 # reference
 1. https://chai2010.cn/advanced-go-programming-book

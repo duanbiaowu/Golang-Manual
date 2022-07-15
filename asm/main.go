@@ -1,6 +1,7 @@
 package main
 
 import (
+	"Golang-Patterns/asm/pkg"
 	"fmt"
 	"unsafe"
 )
@@ -32,6 +33,11 @@ func getBirthYear() int32
 func getVersion() float32
 
 func main() {
+	println(pkg.Id)
+	println(pkg.Name)
+	println(pkg.UserName)
+	pkg.Say()
+
 	println(add(1, 2))
 	println(addX(1, 2))
 	println(sub(10, 5))
