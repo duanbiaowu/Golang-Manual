@@ -14,10 +14,10 @@ ADDQ $0x18, SP // 对 SP 做加法，清除函数栈帧
 ### 数据搬运
 搬运的长度是由 MOV 的后缀决定的
 ```shell
-MOVB $1, DI      // 1 byte
-MOVW $0x10, BX   // 2 bytes
-MOVD $1, DX      // 4 bytes
-MOVQ $-10, AX     // 8 bytes
+MOVB $1, DI      // 1 byte   B => Byte
+MOVW $0x10, BX   // 2 bytes  W => Word
+MOVD $1, DX      // 4 bytes  L => Long
+MOVQ $-10, AX     // 8 bytes Q => Quadword
 ```
 ### 常见计算指令
 类似数据搬运指令，同样可以通过修改指令的后缀来对应不同长度的操作数。例如 ADDQ/ADDW/ADDL/ADDB。
@@ -51,6 +51,15 @@ MOVQ $101, AX = mov rax, 101
 * SB: Static base pointer: global symbols.
 * SP: Stack pointer: the highest address within the local stack frame.
 
+在AMD64环境，伪PC寄存器其实是IP指令计数器寄存器的别名。伪FP寄存器对应的是函数的帧指针，一般用来访问函数的参数和返回值。
+伪SB意为静态内存的开始地址。内存是通过SB伪寄存器定位。可以将SB想象为一个和内容容量有相同大小的字节数组，
+所有的静态全局符号通常可以通过SB加一个偏移量定位，而我们定义的符号其实就是相对于SB内存开始地址偏移量。对于SB伪寄存器，
+全局变量和全局函数的符号并没有任何区别。
+伪SP栈指针对应的是当前函数栈帧的底部（不包括参数和返回值部分），一般用于定位局部变量。
+伪SP是一个比较特殊的寄存器，因为还存在一个同名的SP真寄存器。真SP寄存器对应的是栈的顶部，一般用于定位调用其它函数的参数和返回值。
+**当需要区分伪寄存器和真寄存器的时候只需要记住一点：伪寄存器一般需要一个标识符和偏移量为前缀，如果没有标识符前缀则是真寄存器。
+比如(SP)、+8(SP)没有标识符前缀为真SP寄存器，而a(SP)、b+8(SP)有标识符为前缀表示伪寄存器。**
+
 补充说明:
 FP: 使用形如 symbol+offset(FP) 的方式，引用函数的输入参数。例如 arg0+0(FP)，arg1+8(FP)，使用 FP 不加 symbol 时，无法通过编译，
 在汇编层面来讲，symbol 并没有什么用，加 symbol 主要是为了提升代码可读性。另外，官方文档虽然将伪寄存器 FP 称之为 frame pointer，
@@ -65,7 +74,8 @@ SB: 全局静态基指针，一般用来声明函数或全局变量，在之后�
 SP: plan9 的这个 SP 寄存器指向当前栈帧的局部变量的开始位置，使用形如 symbol+offset(SP) 的方式，引用函数的局部变量。
 offset 的合法取值是 [-framesize, 0)，注意是个左闭右开的区间。假如局部变量都是 8 字节，那么第一个局部变量就可以用 localvar0-8(SP) 来表示。
 这也是一个词不表意的寄存器。与硬件寄存器 SP 是两个不同的东西，在栈帧 size 为 0 的情况下，伪寄存器 SP 和硬件寄存器 SP 指向同一位置。
-手写汇编代码时，如果是 symbol+offset(SP) 形式，则表示伪寄存器 SP。如果是 offset(SP) 则表示硬件寄存器 SP。务必注意。对于编译输出(go tool compile -S / go tool objdump)的代码来讲，目前所有的 SP 都是硬件寄存器 SP，无论是否带 symbol。
+手写汇编代码时，如果是 symbol+offset(SP) 形式，则表示伪寄存器 SP。如果是 offset(SP) 则表示硬件寄存器 SP。务必注意。
+对于编译输出(go tool compile -S / go tool objdump)的代码来讲，目前所有的 SP 都是硬件寄存器 SP，无论是否带 symbol。
 
 这里对容易混淆的几点简单进行说明：
 1. 伪 SP 和硬件 SP 不是一回事，在手写代码时，伪 SP 和硬件 SP 的区分方法是看该 SP 前是否有 symbol。如果有 symbol，那么即为伪寄存器，
@@ -86,6 +96,18 @@ offset 的合法取值是 [-framesize, 0)，注意是个左闭右开的区间。
 DATA  symbol+offset(SB)/width, value
 GLOBL divtab(SB), RODATA, $64
 
+# ·count以中点开头表示是当前包的变量
+GLOBL ·count(SB),$4   
+
+# 既可以逐个字节初始化，也可以一次性初始化：
+DATA ·count+0(SB)/1,$1
+DATA ·count+1(SB)/1,$2
+DATA ·count+2(SB)/1,$3
+DATA ·count+3(SB)/1,$4
+
+# OR
+DATA ·count+0(SB)/4,$0x04030201
+
 # 所有符号在声明时，其 offset 一般都是 0
 # 如果在全局变量中定义数组，或字符串，这时候就需要用上非 0 的 offset 了
 # 新的标记 <>，这个跟在符号名之后，表示该全局变量只在当前文件中生效，类似于 C 语言中的 static。如果在另外文件中引用该变量的话，
@@ -103,6 +125,7 @@ func getVersion() float32
 
 main.s
 # ·version(SB)，表示该符号需要链接器来帮我们进行重定向(relocation)，如果找不到该符号，会输出 relocation target not found 的错误。
+# NOSPLIT主要用于指示叶子函数 (被其它函数调用的函数) 不进行栈分裂。NOSPLIT对应Go语言中的//go:nosplit注释.
 TEXT ·getVersion(SB),NOSPLIT,$0-4
     MOVQ ·version(SB), AX  
     MOVQ AX, ret+0(FP)
@@ -180,6 +203,34 @@ package pkg
 
 var NameData [8]byte
 var Name string
+```
+
+## 函数调用
+调用函数时，被调用函数的参数和返回值内存空间都必须由调用者提供。因此函数的局部变量和为调用其它函数准备的栈空间总和就确定了函数帧的大小。
+调用其它函数前调用方要选择保存相关寄存器到栈中，并在调用函数返回后选择要恢复的寄存器进行保存。
+最终通过CALL指令调用函数的过程和调用我们熟悉的调用println函数输出的过程类似。
+
+在X86平台，函数的调用栈是从高地址向低地址增长的，因此伪SP寄存器对应栈帧的底部其实是对应更大的地址。当前栈的顶部对应真实存在的SP寄存器，
+对应当前函数栈帧的栈顶，对应更小的地址。如果整个内存用Memory数组表示，那么Memory[0(SP):end-0(SP)]就是对应当前栈帧的切片，
+其中开始位置是真SP寄存器，结尾部分是伪SP寄存器。真SP寄存器一般用于表示调用其它函数时的参数和返回值，真SP寄存器对应内存较低的地址，
+所以被访问变量的偏移量是正数；而伪SP寄存器对应高地址，对应的局部变量的偏移量都是负数。
+
+### 宏函数
+宏函数并不是Go汇编语言所定义，而是Go汇编引入的预处理特性自带的特性。
+```shell
+# 定义一个交换两个寄存器的宏
+#define SWAP(x, y, t) MOVQ x, t; MOVQ y, x; MOVQ t, y
+# 因为汇编语言中无法定义临时变量，我们增加一个参数用于临时寄存器。下面是通过SWAP宏函数交换AX和BX寄存器的值，然后返回结果：
+// func Swap(a, b int) (int, int)
+TEXT ·Swap(SB), $0-32
+    MOVQ a+0(FP), AX // AX = a
+    MOVQ b+8(FP), BX // BX = b
+
+    SWAP(AX, BX, CX)     // AX, BX = b, a
+
+    MOVQ AX, ret0+16(FP) // return
+    MOVQ BX, ret1+24(FP) //
+    RET
 ```
 
 # reference
