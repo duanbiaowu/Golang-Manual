@@ -7,6 +7,7 @@ require (
 	github.com/afex/hystrix-go v0.0.0-20180502004556-fa1af6a1f4f5
 	github.com/allegro/bigcache/v3 v3.0.2
 	github.com/coocood/freecache v1.2.1
+	github.com/evanphx/wildcat v0.0.0-20141114174135-e7012f664567
 	github.com/gin-gonic/gin v1.7.7
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/go-resty/resty/v2 v2.7.0
@@ -15,6 +16,7 @@ require (
 	github.com/google/wire v0.5.0
 	github.com/orcaman/concurrent-map v1.0.0
 	github.com/panjf2000/ants/v2 v2.5.0
+	github.com/panjf2000/gnet/v2 v2.1.1
 	github.com/pkg/errors v0.9.1
 	github.com/pkg/profile v1.6.0
 	github.com/stretchr/testify v1.7.1
@@ -44,12 +46,11 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180228061459-e0a39a4cb421 // indirect
 	github.com/modern-go/reflect2 v0.0.0-20180701023420-4b7aa43c6742 // indirect
-	github.com/panjf2000/gnet/v2 v2.1.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/smartystreets/goconvey v1.7.2 // indirect
 	github.com/stretchr/objx v0.1.0 // indirect
 	github.com/ugorji/go/codec v1.1.7 // indirect
-	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/vektra/errors v0.0.0-20140903201135-c64d83aba85a // indirect
 	go.uber.org/atomic v1.9.0 // indirect
 	go.uber.org/multierr v1.8.0 // indirect
 	go.uber.org/zap v1.21.0 // indirect

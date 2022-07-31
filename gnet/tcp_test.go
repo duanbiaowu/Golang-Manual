@@ -41,7 +41,7 @@ func (es *echoServer) OnTraffic(c gnet.Conn) gnet.Action {
 	return gnet.None
 }
 
-func TestGNet(t *testing.T) {
+func TestTcp(t *testing.T) {
 	var port int
 	var multicore bool
 
